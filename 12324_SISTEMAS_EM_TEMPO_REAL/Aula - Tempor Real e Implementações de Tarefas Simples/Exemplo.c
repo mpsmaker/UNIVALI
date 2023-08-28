@@ -78,7 +78,7 @@ void loopExample(int start, int end) {
     }
 }
 
-/* clock() 
+/* clock() */
 int main() {
     const int num_samples = 100;
     clock_t start_time, end_time;
@@ -114,7 +114,7 @@ int main() {
 
     return 0;
 }
-*/
+
 
 /* time() 
 int main() {
@@ -196,7 +196,7 @@ int main() {
 
 */
 
-/* intrin.h */
+/* intrin.h 
 // Linux/GCC
 uint64_t rdtsc(){
     unsigned int lo, hi;
@@ -238,3 +238,5 @@ int main() {
 
     return 0;
 }
+
+*/
