@@ -78,7 +78,7 @@ void loopExample(int start, int end) {
     }
 }
 
-/* clock() */
+/* clock() 
 int main() {
     const int num_samples = 100;
     clock_t start_time, end_time;
@@ -114,9 +114,9 @@ int main() {
 
     return 0;
 }
+*/
 
-
-/* time() 
+/* time() */ 
 int main() {
     const int num_samples = 100;
     time_t begin, end;
@@ -152,7 +152,7 @@ int main() {
 
     return 0;
 }
-*/
+
 
 /* clock_gettime()
 int main() {

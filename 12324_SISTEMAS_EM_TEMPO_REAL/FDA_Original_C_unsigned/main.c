@@ -4,6 +4,8 @@
 #include <math.h>
 #include "pgmfiles.h"
 #include "diff2d.h"
+#include <time.h>
+
 
 //gcc -o fda pgmtolist.c pgmfiles.c diff2d.c main.c -lm
 
@@ -73,12 +75,19 @@ void main (int argc, char **argv) {
   scanf("%ld", &imax);
 
   //begin time
+  clock_t start_time, end_time;
+  start_time = clock();
+
   for (i=1; i<=imax; i++)
     {
       printf("%ld \n",(long)3809);
       //printf("iteration number: %ld \n", i);
       diff2d (0.5, lambda, PGMImage->x, PGMImage->y, matrix); 
     }
+
+  end_time = clock();
+  clock_t elapsed_time = end_time - start_time;
+  printf("Elapsed time: %lu clock ticks\n", elapsed_time);
   //end time
   
 
