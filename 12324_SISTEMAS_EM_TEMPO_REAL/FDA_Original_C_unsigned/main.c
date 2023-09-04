@@ -41,6 +41,9 @@ void main (int argc, char **argv) {
       exit(result);
     }
 
+  //begin time
+  clock_t start_time, end_time, elapsed_time;
+  start_time = clock();
   /* ---- allocate storage for matrix ---- */
   
   matrix = (float **) malloc (PGMImage->x * sizeof(float *));
@@ -65,6 +68,11 @@ void main (int argc, char **argv) {
     for (j=0; j<PGMImage->y; j++)
       matrix[i][j] = (float) *(PGMImage->imageData + (i*PGMImage->y) + j); 
   
+  end_time = clock();
+  elapsed_time = end_time - start_time;
+  printf("Elapsed time: %lu clock ticks\n", elapsed_time);
+  //end time
+
   /* ---- process image ---- */
   
   printf("contrast paramter lambda (>0) : ");
@@ -75,7 +83,6 @@ void main (int argc, char **argv) {
   scanf("%ld", &imax);
 
   //begin time
-  clock_t start_time, end_time;
   start_time = clock();
 
   for (i=1; i<=imax; i++)
@@ -86,11 +93,13 @@ void main (int argc, char **argv) {
     }
 
   end_time = clock();
-  clock_t elapsed_time = end_time - start_time;
+  elapsed_time = end_time - start_time;
   printf("Elapsed time: %lu clock ticks\n", elapsed_time);
   //end time
   
 
+  //begin time
+  start_time = clock();
   /* copy the Result Image to PGM Image/File structure */
 
   for (i=0; i<PGMImage->x; i++)
@@ -111,6 +120,11 @@ void main (int argc, char **argv) {
 
   write8bitPGM(PGMImage);
 
+  end_time = clock();
+  elapsed_time = end_time - start_time;
+  printf("Elapsed time: %lu clock ticks\n", elapsed_time);
+  //end time
+
   /* ---- disallocate storage ---- */
   
   for (i=0; i<PGMImage->x; i++)
@@ -119,6 +133,11 @@ void main (int argc, char **argv) {
 
   free(PGMImage->imageData);
   free(PGMImage);
+
+
+/* arquivo de saida */
+  fwrite(&b, 1, 1, PGMImage);
+
 }
 
 
