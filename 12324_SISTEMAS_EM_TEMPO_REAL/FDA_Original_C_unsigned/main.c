@@ -75,7 +75,7 @@ void *critical_function(void *tid)
   /* ---- copy matrix part into c ---- */
   for (i=1; i<=ITERATIONS; i++)
     for (j=1; j<=PGMImage->y; j++)
-      c[i][j] = matrix[i-1][j-1];
+      c[i][j] = matrix[start+i-1][j-1];
 
   printf ("\n[Thread %5d] Doing iterations \t%10d to \t %10d \n",*mytid,start,end-1); 
 
