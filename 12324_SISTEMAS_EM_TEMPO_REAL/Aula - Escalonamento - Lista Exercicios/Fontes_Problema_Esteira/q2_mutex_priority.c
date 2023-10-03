@@ -47,8 +47,25 @@ void init_mutex_inh();
 int main(){
    pthread_t t1, t2, t3, t4;
    pthread_attr_t tattr;
-   int newprio = 20;
+   int newprio = 60;
    struct sched_param param;
+
+   /* Trocar a política de escalonamento do processo para os tipos existentes na função sched_setscheduler: */
+   param.sched_priority = newprio; // Defina a prioridade desejada
+   int ret = sched_setscheduler(0, SCHED_FIFO, &param);
+
+   /*
+      ps -e -o uid,pid,ppid,pri,ni,cmd
+      top -p <PID>
+
+      1.b) Investigar a diferença/semelhança entre pthread_attr_setschedpolicy e pthread_attr_setschedparam:
+
+         pthread_attr_setschedpolicy é usado para definir a política de escalonamento de uma thread, 
+         como SCHED_FIFO ou SCHED_RR.
+         pthread_attr_setschedparam é usado para definir os parâmetros de escalonamento de uma thread, 
+         como a prioridade.  
+   */
+
    
    /*chama a funçao para inicializar o mutex com a herança de prioridade*/
    init_mutex_inh();
@@ -60,7 +77,7 @@ int main(){
    pthread_attr_getschedparam (&tattr, &param);
 
    /* definir a prioridade; outros parametros nao mudaram */
-   param.sched_priority = 20;
+   param.sched_priority = 98;
 
    /* definindo o novo parametro de escalonamento */
    pthread_attr_setschedparam (&tattr, &param);
@@ -69,7 +86,7 @@ int main(){
    pthread_create(&t1, &tattr, (void *) atualiza_sensor1, NULL); 
 
    /* definir a prioridade; outros parametros nao mudaram */
-   param.sched_priority = 20;
+   param.sched_priority = 99;
 
    /* definindo o novo parametro de escalonamento */
    pthread_attr_setschedparam (&tattr, &param);
@@ -304,3 +321,67 @@ void init_mutex_inh(){
       printf("Default mutex protocol is unrecognized: %d\n");
 #endif
 }
+
+
+
+/*
+
+1.a) Trocar a política de escalonamento do processo para os tipos existentes na função sched_setscheduler:
+
+Use a função sched_setscheduler para definir a política de escalonamento do processo. 
+Você pode fazer isso no início do main() antes de criar as threads.
+Exemplo de como definir a política de escalonamento para FIFO:
+--------------------------------------------------------------------
+struct sched_param param;
+param.sched_priority = 50; // Defina a prioridade desejada
+int ret = sched_setscheduler(0, SCHED_FIFO, &param);
+--------------------------------------------------------------------
+
+1.b) Investigar a diferença/semelhança entre pthread_attr_setschedpolicy e pthread_attr_setschedparam:
+
+ - pthread_attr_setschedpolicy é usado para definir a política de escalonamento de uma thread, 
+como SCHED_FIFO ou SCHED_RR.
+ - pthread_attr_setschedparam é usado para definir os parâmetros de escalonamento de uma thread, 
+ como a prioridade.
+
+1.c) Repita o exercício "a", mas agora para as threads criadas com a função investigada em "b":
+
+Para cada thread usar pthread_attr_setschedpolicy e pthread_attr_setschedparam para definir 
+a política de escalonamento e os parâmetros de escalonamento individualmente.
+
+Exemplo de como configurar a política e os parâmetros de escalonamento para uma thread 
+criada com pthread_create:
+--------------------------------------------------------------------------------------
+pthread_t thread;
+pthread_attr_t attr;
+struct sched_param param;
+
+pthread_attr_init(&attr);
+pthread_attr_setschedpolicy(&attr, SCHED_FIFO); // Defina a política de escalonamento desejada
+param.sched_priority = 50; // Defina a prioridade desejada
+pthread_attr_setschedparam(&attr, &param);
+
+pthread_create(&thread, &attr, (void *)sua_funcao, NULL);
+-------------------------------------------------------------------------------------------------
+
+1.d) Modifique a afinidade do CPU para o processo:
+Para definir a afinidade de CPU para o processo, usar a função sched_setaffinity. 
+Esta função permite definir quais CPUs o processo pode ser executado.
+Exemplo de como definir a afinidade para o CPU 0 e 1:
+----------------------------------------------------------------------------------
+cpu_set_t cpuset;
+CPU_ZERO(&cpuset);
+CPU_SET(0, &cpuset);
+CPU_SET(1, &cpuset);
+
+if (sched_setaffinity(0, sizeof(cpu_set_t), &cpuset) == -1) {
+    perror("sched_setaffinity");
+}
+-----------------------------------------------------------------------------------
+
+Certifique-se de que as políticas e prioridades que você define para suas threads 
+estejam de acordo com os recursos disponíveis no sistema e com os requisitos do 
+seu aplicativo. Além disso, tenha cuidado ao definir a afinidade do CPU, pois isso 
+pode afetar o desempenho geral do sistema.
+
+*/
